@@ -1,10 +1,87 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Reverse Difference Calculator";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">Reverse Difference Calculator</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="reverseForm">
+                        <div class="mb-3">
+                            <label for="inputNumber" class="form-label">Enter a whole number:</label>
+                            <input type="text" 
+                                   class="form-control form-control-lg text-center" 
+                                   id="inputNumber" 
+                                   name="InputNumber" 
+                                   value="@Model.InputNumber"
+                                   placeholder="Enter number here"
+                                   autocomplete="off"
+                                   required />
+                            <div class="form-text">Only whole numbers are allowed (no letters or decimals)</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Calculate Difference</button>
+                        </div>
+                    </form>
+
+                    @if (Model.HasResult)
+                    {
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <h5 class="text-center mb-3">Result</h5>
+                            <div class="text-center">
+                                <p class="mb-1"><strong>Original Number:</strong> @Model.InputNumber</p>
+                                <p class="mb-1"><strong>Reversed Number:</strong> @Model.ReversedNumber</p>
+                                <p class="mb-0"><strong class="text-primary fs-4">Difference:</strong> <span class="text-primary fs-4">@Model.Difference</span></p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputNumber = document.getElementById('inputNumber');
+            
+            // Only allow digits to be typed
+            inputNumber.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Prevent non-digit characters on keydown
+            inputNumber.addEventListener('keydown', function(e) {
+                // Allow: backspace, delete, tab, escape, enter, and arrow keys
+                if ([8, 9, 27, 13, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true)) {
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Prevent paste of non-digit characters
+            inputNumber.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const digitsOnly = paste.replace(/[^0-9]/g, '');
+                this.value = digitsOnly;
+            });
+        });
+    </script>
+}
